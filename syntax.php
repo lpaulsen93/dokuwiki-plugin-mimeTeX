@@ -6,8 +6,16 @@
  * @author     Michael Gritsaenko <michael.gritsaenko@gmail.com>
  * @date       2011-02-01
  */
- 
-if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/');
+
+/**
+ * ChangeLog:
+ *
+ * [04/30/2015]: by LarsDW223
+ *               Added ODT support.
+ */
+
+// must be run within Dokuwiki
+if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 
@@ -76,13 +84,9 @@ class syntax_plugin_mimetex extends DokuWiki_Syntax_Plugin {
     */
     function render($mode, &$renderer, $formula) {
       global $conf;
-      if($mode == 'xhtml' && strlen($formula[0]) > 1) {
+      if( ($mode == 'xhtml' || $mode == 'odt') && strlen($formula[0]) > 1) {
         if ( !is_dir($conf['mediadir'] . '/latex') ) {
           mkdir($conf['mediadir'] . '/latex', 0777-$conf['dmask']);
-        }
-        if ( is_readable($filename) ) {
-          $renderer->doc .= '<img src="'.$url.'" class="media" title="Graph" alt="Graph" />';
-          return true;
         }
 
         $hash = md5(serialize($formula));
@@ -100,7 +104,14 @@ class syntax_plugin_mimetex extends DokuWiki_Syntax_Plugin {
           }
         }
 
-        $renderer->doc .= '<img src="'.$cacheurl.'" class="media" title="mimeTeX" alt="mimeTeX" />';
+        switch ($mode) {
+            case 'odt':
+                $renderer->_odtAddImage ($cachefilename);
+                break;
+            default:
+                $renderer->doc .= '<img src="'.$cacheurl.'" class="media" title="mimeTeX" alt="mimeTeX" />';
+                break;
+        }
         return true;
       }
       return false;
