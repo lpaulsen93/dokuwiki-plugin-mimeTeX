@@ -22,15 +22,25 @@
  * @package mimetexrender
  *
  */
-if(!defined('MIMETEXEXE')) define('MIMETEXEXE','"'.realpath(dirname(__FILE__).'/mimetex.exe').'"');
 
+/**
+ * ChangeLog:
+ *
+ * [04/30/2015]: by LarsDW223
+ *               Added support for Linux systems:
+ *               The location of 'mimetex' under Linux is queried by executing 'which mimetex'.
+ *               The Linux version of 'mimetex' is not included in this plugin, if it is not installed
+ *               it needs to be installed manually first e.g. using 'sudo apt-get install mimetex'.
+ */
+
+if(!defined('MIMETEXEXE')) define('MIMETEXEXE','"'.realpath(dirname(__FILE__).'/mimetex.exe').'"');
 
 class mimetexRender {
 
     // ====================================================================================
     // Variable Definitions
     // ====================================================================================
-    var $_tmp_dir = "c:/temp";
+
     // i was too lazy to write mutator functions for every single program used
     // just access it outside the class or change it here if nescessary
 //    var $_mimetex_path = ;
@@ -61,6 +71,24 @@ class mimetexRender {
      *          cache directory
      */
     function render($cachefilename, $formula) {
+        // Guess operating system
+        $usr_bin_dir = opendir('/usr/bin');
+        if ( $usr_bin_dir === false ) {
+            // Directory '/usr/bin' does not exist (or is not accessible).
+            // Assume Windows installation.
+            $_tmp_dir = "c:/temp";
+            $executeable = MIMETEXEXE;
+        } else {
+            // Directory '/usr/bin' exists. Assume Linux installation.
+            closedir ($usr_bin_dir);
+            $_tmp_dir = DOKU_PLUGIN.'temp';
+            $executeable = exec('which mimetex');
+        }
+
+        if ( empty ($executeable) === true ) {
+            $this->_error = "could not locate 'mimetex' command";
+            return false;
+        }
 
         $formula = preg_replace("/&gt;/i", ">", $formula);
         $formula = preg_replace("/&lt;/i", "<", $formula);
@@ -91,7 +119,8 @@ class mimetexRender {
 
         // convert tex file to gif using mimetex.exe
         $img = $tmp.".gif";
-        $command = MIMETEXEXE." -f ".$tex." -e ".$img;
+
+        $command = $executeable." -f ".$tex." -e ".$img;
         
         $status_code = exec($command);
 
