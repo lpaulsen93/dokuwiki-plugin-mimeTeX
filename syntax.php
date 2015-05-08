@@ -32,7 +32,7 @@ class syntax_plugin_mimetex extends DokuWiki_Syntax_Plugin {
         return array(
             'author' => 'Michael Gritsaenko',
             'email'  => 'michael.gritsaenko@gmail.com',
-            'date'   => '2011-02-01',
+            'date'   => '2015-05-07',
             'name'   => 'mimetex Plugin',
             'desc'   => 'mimetex Plugin based on mimeTeX
                          parses latex blocks',
