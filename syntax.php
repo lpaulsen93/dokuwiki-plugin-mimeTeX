@@ -82,7 +82,7 @@ class syntax_plugin_mimetex extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
     */
-    function render($mode, &$renderer, $formula) {
+    function render($mode, Doku_Renderer $renderer, $formula) {
       global $conf;
       if( ($mode == 'xhtml' || $mode == 'odt') && strlen($formula[0]) > 1) {
         if ( !is_dir($conf['mediadir'] . '/latex') ) {
