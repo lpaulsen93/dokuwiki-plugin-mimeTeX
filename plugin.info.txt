@@ -1,7 +1,7 @@
 base   mimetex
 author Michael Gritsaenko
 email  michael.gritsaenko@gmail.com
-date   2015-05-07
+date   2018-05-07
 name   mimetex Plugin parses latex blocks
 desc   mimetex Plugin based on mimeTeX project 
        (http://www.forkosh.com/mimetex.html) parses latex blocks
