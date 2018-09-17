@@ -68,7 +68,7 @@ class syntax_plugin_mimetex extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
     */
-    function handle($match, $state, $pos) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
       if ( $state == DOKU_LEXER_UNMATCHED ) {
         $matches = preg_split('/>/u',$match,2);
         $matches[0] = trim($matches[0]);
